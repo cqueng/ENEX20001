@@ -61,7 +61,7 @@ int main(void) {
 
     // Main loop
     while (1) {
-        // Program can be extended to include user interactions via USART
+        // Do other stuff
         // ...
         _delay_ms(5000); // Wait for 5 seconds before repeating the actions
     }
