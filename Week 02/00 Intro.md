@@ -6,9 +6,11 @@ Registers are small, specialized storage locations within the AVR microcontrolle
 
 ### Example: Defining a Register
 ```c
-#define MY_REGISTER (*(volatile uint8_t*)0x23)
+#define LED_Pin 2
 ```
-This defines `MY_REGISTER` as a pointer to a volatile memory location (a register) at the address `0x23`. The `volatile` keyword is used to tell the compiler that the memory at this address can change at any time, and it should not assume a constant value.
+The line #define LED_Pin 2 in a C program is a preprocessor directive that tells the compiler to replace instances of LED_Pin with the number 2 wherever it appears in the code. This is not a variable or a pointer to a memory location; it's a simple textual substitution that happens before the actual compilation process begins.
+
+This means practically that LED_Pin becomes a label for the number 2. So later in your code, when you use LED_Pin, the compiler will understand it as 2. This is important as it creates a single point of change for later. For example, if you need to move a pin from 2 to 3, you would only change it at one point.
 
 ## Data Types
 The AVR C programming language uses several data types that define the size and type of data the variable can store, which is essential for memory allocation and proper handling by the compiler.
