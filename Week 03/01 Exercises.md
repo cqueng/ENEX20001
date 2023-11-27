@@ -204,6 +204,34 @@ In this version:
 - The `default` case handles when no buttons are pressed.
 
 
+#### In fact, you could further simplify all of this and just call the simple numeric representation of the combined button states, where each number corresponds to a specific combination of button presses.
+
+Here's how the `switch` statement would look with this approach:
+
+```c
+switch (buttonState) {
+    case 1: // Button 1 (PX6) pressed
+        // Turn on LED 1 (PX7), Turn off LED 2 (PX4)
+        break;
+
+    case 2: // Button 2 (PX5) pressed
+        // Turn off LED 1 (PX7), Turn on LED 2 (PX4)
+        break;
+
+    case 3: // Both buttons (PX6 and PX5) pressed
+        // Turn on both LEDs (PX7 and PX4)
+        break;
+
+    default: // No buttons pressed
+        // Turn off both LEDs
+        break;
+}
+```
+Where:
+- `case 1`: Corresponds to `buttonState` being `1`, which happens when only Button 1 (PX6) is pressed.
+- `case 2`: Corresponds to `buttonState` being `2`, which happens when only Button 2 (PX5) is pressed.
+- `case 3`: Corresponds to `buttonState` being `3`, which happens when both buttons are pressed.
+- `default`: Handles the scenario when no buttons are pressed (`buttonState` is `0`).
 
 
 # Understanding `buttonState` Variable Construction
