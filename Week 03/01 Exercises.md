@@ -132,6 +132,8 @@ switch (buttonState) {
 }
 ```
 
+If you are unsure scroll to the bottom of this document for a detailed explanation of how the states work.
+
 ### Explanation of the Switch Statement
 
 - We pass `buttonState` to the `switch` statement, which routes the program flow to the matching `case` based on the value of `buttonState`.
@@ -166,4 +168,74 @@ default: // No buttons are pressed
 - `default`: Used when none of the cases match, which means neither button is pressed.
 
 Each `case` executes its block of code and `break` ensures that the program exits the switch after a match is found and executed.
+
+Understood, let's revise the snippet to use the generic `PORTX` and pin identifiers like `PX6` and `PX5`. This way, it aligns with the generalized approach we've been using:
+
+---
+
+### Alternative Approach for `switch` Statement
+
+Here's an alternative way to structure the `switch` statement in Exercise 3, using direct port bit identifiers `(1 << PX6)` and `(1 << PX5)`:
+
+```c
+// Adjust the logic to directly use the pin numbers in the case labels
+switch ((PINX & (1 << PX6)) | (PINX & (1 << PX5))) {
+    case (1 << PX6): // Only Button 1 (connected to PX6) pressed
+        // Turn on LED 1 (connected to PX7), Turn off LED 2 (connected to PX4)
+        break;
+    case (1 << PX5): // Only Button 2 (connected to PX5) pressed
+        // Turn off LED 1 (connected to PX7), Turn on LED 2 (connected to PX4)
+        break;
+    case (1 << PX6) | (1 << PX5): // Both buttons pressed
+        // Turn on both LEDs (connected to PX7 and PX4)
+        break;
+    default: // No buttons pressed
+        // Turn off both LEDs
+        break;
+}
+```
+
+In this version:
+
+- The `switch` statement evaluates the direct button states from `PINX`.
+- `case (1 << PX6)`: Activates if only the button connected to PX6 is pressed.
+- `case (1 << PX5)`: Activates if only the button connected to PX5 is pressed.
+- `case (1 << PX6) | (1 << PX5)`: Activates if both buttons are pressed.
+- The `default` case handles when no buttons are pressed.
+
+
+
+
+# Understanding `buttonState` Variable Construction
+
+In the context of controlling two buttons, we represent their states using two separate bits in the `buttonState` variable. This approach simplifies understanding the combined state of both buttons:
+
+- **Bit 0:** Represents the state of Button 1 (connected to PX6).
+- **Bit 1:** Represents the state of Button 2 (connected to PX5).
+
+These bits combine to represent the state of both buttons in a binary form:
+
+- **00:** Neither button is pressed.
+- **01:** Only Button 1 is pressed.
+- **10:** Only Button 2 is pressed.
+- **11:** Both buttons are pressed.
+
+### How `buttonState` is Constructed
+
+1. **Read Button States:** We check the state of each button using `PINX & (1 << PXx)`. Since the buttons are in a pull-down configuration, we invert the result to make `0` represent a press and `1` represent no press.
+
+2. **Adjust the Bits:** We then position these inverted results in the `buttonState` variable:
+   - Button 1's inverted result is placed in the least significant bit of `buttonState`.
+   - Button 2's inverted result is shifted left by one bit and then placed in `buttonState`. This separates the states of the two buttons.
+
+3. **Combine Button States:** The bitwise OR operator (`|`) combines these two bits into the single `buttonState` variable.
+
+### Practical Example
+
+- **Both Buttons Not Pressed:** `PINX` reads HIGH for both, resulting in `00` after inversion and shifting, so `buttonState` is `0`.
+- **Button 1 Pressed:** `PINX` reads LOW for PX6, inversion gives `01`, and `buttonState` becomes `1`.
+- **Button 2 Pressed:** `PINX` reads LOW for PX5, inversion and shifting give `10`, making `buttonState` `2`.
+- **Both Pressed:** `PINX` reads LOW for both, inversion and combining give `11`, so `buttonState` is `3`.
+
+The `switch-case` in the code then uses `buttonState` to determine which LEDs to control based on these combinations.
 
