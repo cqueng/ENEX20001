@@ -132,7 +132,6 @@ int main(void) {
     return 0;
 }
 ```
-Certainly! Here's a small section on arrays in C that can be inserted into your guide. This section provides a basic introduction to arrays, specifically tailored for Arduino programming with AVR/Standard C libraries.
 
 ---
 
