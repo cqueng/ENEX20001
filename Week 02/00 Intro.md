@@ -87,7 +87,6 @@ The following program demonstrates how to use bitwise operations to blink an LED
 
 ### Code: Blinking LED
 ```c
-#define F_CPU 16000000UL  // Define the CPU frequency for the delay
 #include <avr/io.h>
 #include <util/delay.h>
 
