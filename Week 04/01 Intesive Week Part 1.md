@@ -132,6 +132,50 @@ int main(void) {
     return 0;
 }
 ```
+Certainly! Here's a small section on arrays in C that can be inserted into your guide. This section provides a basic introduction to arrays, specifically tailored for Arduino programming with AVR/Standard C libraries.
+
+---
+
+### Arrays in C
+
+Arrays are fundamental data structures in C that allow you to store multiple items of the same data type in a contiguous block of memory. They are particularly useful in microcontroller programming for organizing and manipulating groups of related data.
+
+#### Declaring and Initializing Arrays
+
+To declare an array in C, you specify the data type of its elements and the number of elements it will hold. 
+
+Example:
+```c
+#include <avr/io.h>
+
+int ledPins[4] = {PD0, PD1, PD2, PD3}; // Array of 4 integers
+```
+
+In this example, `ledPins` is an array of integers that stores the pin numbers for 4 LEDs connected to the Arduino.
+
+#### Accessing Array Elements
+
+You can access elements of an array using their index. Note that array indices in C start at 0.
+
+Example:
+```c
+PORTD |= (1 << ledPins[0]); // Turn on LED connected to the first pin in the array
+```
+
+#### Using Arrays in Loops
+
+Arrays are often used in conjunction with loops to perform operations on a series of elements.
+
+Example:
+```c
+for(int i = 0; i < 4; i++) {
+    PORTD |= (1 << ledPins[i]); // Turn on each LED sequentially
+    _delay_ms(500);
+    PORTD &= ~(1 << ledPins[i]); // Turn off each LED sequentially
+}
+```
+
+This loop sequentially turns on and off each LED connected to the pins defined in the `ledPins` array.
 
 
 ### Subroutines (Functions) in C
