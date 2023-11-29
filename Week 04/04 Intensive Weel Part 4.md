@@ -167,12 +167,27 @@ int main() {
 # Ultrasonic Sensor
 
 **Please note this example is to be used in conjunction with the workshop slides**
+We will need the following headers and variables:
+```
+#include <avr/io.h>
+#include <util/delay.h>
+#include <avr/interrupt.h>
+#include <stdlib.h>
+
+#define ULTRASONIC_TRIGGER_PIN PD4
+#define ULTRASONIC_ECHO_PIN PD2
+
+volatile uint8_t echo_received = 0;
+volatile uint16_t echo_signal_time_out = 0;
+
+volatile uint16_t pulse_width = 0;
+volatile uint16_t count = 0;
+uint8_t reload = 100;
+
+```
   
 ### Initialisation Code Snippet
 ```c
-#define ULTRASONIC_TRIGGER_PIN PD3
-#define ULTRASONIC_ECHO_PIN PD2
-
 void initIO(){
     // Set the ultrasonic trigger pin as output
     DDRD |= (1 << ULTRASONIC_TRIGGER_PIN);
@@ -270,8 +285,4 @@ int main() {
 }
 }
 ```
-
-#### Explanation
-- **Timer Interrupt**: The Timer2 interrupt is used to accurately measure the time between the trigger and echo, which corresponds to the distance.
-- **Distance Calculation**: The pulse width is used to calculate the distance to the nearest obstacle.
 
