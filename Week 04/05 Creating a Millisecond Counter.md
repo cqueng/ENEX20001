@@ -63,7 +63,7 @@ int main(void) {
 
 ### Using this in code
 Based on this, we can start to use this to run tasks or check things based on the millis value i.e:
-
+```
 volatile uint32_t milliseconds = 0;
 
 ...
@@ -93,3 +93,4 @@ int main(void) {
         // Other non-blocking code can be placed here
     }
 }
+```
