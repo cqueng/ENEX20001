@@ -132,17 +132,29 @@ int main (void){
 #include <util/delay.h>
 
 void PWM_setup() {
-    TCCR0A |= (1<<COM0B1);
-    TCCR0A |= (1<<WGM00) | (1<<WGM01);
+    // Configure Timer 0 for PWM on pin PD5 (OC0B)
+    // COM0B1: Set to enable PWM on OC0B (PD5)
+    // WGM00 and WGM01: Set to enable Fast PWM mode
+    TCCR0A |= (1<<COM0B1) | (1<<WGM00) | (1<<WGM01);
+
+    // Set the prescaler for Timer 0 to divide the clock by 64
+    // CS00 and CS01: Set these to divide the input clock by 64, 
+    // balancing frequency and resolution
     TCCR0B = (1<<CS00) | (1<<CS01);
 }
 
 int main() {
     DDRD |= (1<<PD5); // Set PD5 as output for PWM
+    // Uncomment line below if using TinkerCAD
+    //init();
     PWM_setup();
 
     while(1) {
-        OCR0B = 128; // Set PWM duty cycle (50%)
+        // Set the PWM duty cycle for PD5
+        // OCR0B is the Output Compare Register for Timer 0 channel B
+        // A value of 128 represents a 50% duty cycle (128/256 ≈ 50%)
+        // because Timer 0 is 8-bit (ranges from 0 to 255)
+        OCR0B = 128;
     }
     return 0;
 }
@@ -156,9 +168,7 @@ int main() {
 - The main loop maintains the PWM output with a 50% duty cycle. This value can be adjusted to see different levels of brightness in an LED or different speeds in a motor.
 
 ## Experimenting with PWM
-- Experiment by changing `OCR0B` values to see different PWM effects.
-
-
+- Experiment by changing `OCR0B` values to see different PWM effects. you can also set PD6 to work with timer 0 at the same time by adding it `TCCR0A` by including `(1<<COM0A1)`. then you can set the duty cycle by using `OCR0A`
 
 # Interfacing with an Ultrasonic Sensor using AVR/Standard C Libraries
 
