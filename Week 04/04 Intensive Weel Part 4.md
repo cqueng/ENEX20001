@@ -181,27 +181,46 @@ int main() {
 ## Setting Up the Ultrasonic Sensor
 - **Pin Configuration**: Defining trigger and echo pins.
 - **Initialisation**: Setting up I/O and Timer for the ultrasonic sensor.
+
   
 ### Initialisation Code Snippet
 ```c
 #define ULTRASONIC_TRIGGER_PIN PD3
 #define ULTRASONIC_ECHO_PIN PD2
 
-void initIO() {
-    DDRD |= (1 << ULTRASONIC_TRIGGER_PIN); // Set trigger pin as output
-    DDRD &= ~(1 << ULTRASONIC_ECHO_PIN); // Set echo pin as input
+void initIO(){
+    // Set the ultrasonic trigger pin as output
+    DDRD |= (1 << ULTRASONIC_TRIGGER_PIN);
+    // Set the ultrasonic echo pin as input
+    DDRD &= ~(1 << ULTRASONIC_ECHO_PIN);
 }
 
-void initTimer2() {
-    // Timer2 setup code
+void initTimer2(){
+    cli(); // Disable global interrupts
+    TCCR0B = 0; // Stop Timer 0 to avoid conflict
+    // Set Timer 2 in CTC (Clear Timer on Compare Match) mode
+    // WGM21: Waveform Generation Mode bit
+    TCCR2A = (1<<WGM21);
+    // Set Timer 2 prescaler to 8 (CS21: Clock Select)
+    // This controls the timer speed
+    TCCR2B = (1<<CS21);
+    sei(); // Enable global interrupts
 }
 
-void enableTimer2Interrupt() {
-    // Enable Timer2 interrupt code
+void enableTimer2Interrupt(){
+    cli(); // Disable global interrupts
+    // Set the compare match value for Timer 2
+    OCR2A = reload;
+    // Enable Timer 2 Compare Match A Interrupt
+    TIMSK2 = (1<<OCIE2A);
+    sei(); // Enable global interrupts
 }
 
-void disableTimer2Interrupt() {
-    // Disable Timer2 interrupt code
+void disableTimer2Interrupt(){
+    cli(); // Disable global interrupts
+    // Disable Timer 2 Compare Match A Interrupt
+    TIMSK2 &= ~(1<<OCIE2A);
+    sei(); // Enable global interrupts
 }
 ```
 
@@ -211,16 +230,59 @@ void disableTimer2Interrupt() {
 
 ### Ultrasonic Sensor Handling Code Snippet
 ```c
-ISR(TIMER2_COMPA_vect) {
-    // Interrupt service routine for Timer2
+ISR(TIMER2_COMPA_vect){
+    // This ISR is called when Timer 2 matches OCR2A value
+    echo_signal_time_out++;
+    // Reload the compare match value
+    OCR2A = reload;
+    // Check if echo is received
+    if(PIND & (1 << ULTRASONIC_ECHO_PIN)){
+        echo_received = 1;
+        count++;
+    }
+    // If echo has ended, calculate the pulse width
+    if(((PIND &(1 << ULTRASONIC_ECHO_PIN))== 0) && echo_received){
+        pulse_width = count;
+        count = 0;
+        echo_signal_time_out = 0;
+    }
 }
 
-void sendUltrasonicTrigger() {
-    // Code to send trigger signal
+void sendUltrasonicTrigger(){
+    // Send a 10ms pulse to the ultrasonic trigger pin
+    PORTD |= (1 << ULTRASONIC_TRIGGER_PIN);
+    _delay_ms(10);
+    PORTD &= ~(1 << ULTRASONIC_TRIGGER_PIN);
 }
 
 int main() {
     // Main loop to repeatedly measure distance
+    // Initial setup
+    usart_setup();
+    initTimer2();
+    initIO();
+    while(1)  {
+
+        // Trigger the ultrasonic sensor
+        sendUltrasonicTrigger();
+        enableTimer2Interrupt();
+        
+        // Wait for the echo or timeout
+        while (pulse_width == 0 && echo_signal_time_out < 400);
+        
+        // Calculate distance based on pulse width
+        float distance = ((pulse_width)*50)/58;
+
+        // Do something with it i.e. print to serial
+
+        // Reset variables for next reading
+        pulse_width = 0;
+        echo_received = 0;
+        disableTimer2Interrupt();
+
+        // wait a bit before next reading
+        _delay_ms(500);
+}
 }
 ```
 
@@ -228,25 +290,3 @@ int main() {
 - **Timer Interrupt**: The Timer2 interrupt is used to accurately measure the time between the trigger and echo, which corresponds to the distance.
 - **Distance Calculation**: The pulse width is used to calculate the distance to the nearest obstacle.
 
-## Transmitting Distance Data Over USART
-- **USART Setup**: Configuring USART for serial communication.
-- **Transmitting Data**: Sending the calculated distance over USART.
-
-### USART Communication Code Snippet
-```c
-void usart_setup() {
-    // USART setup code
-}
-
-void usart_TX(unsigned char TXData) {
-    // Code to transmit data over USART
-}
-
-void usart_putstr(char *data) {
-    // Code to send strings over USART
-}
-
-int main() {
-    // Using USART functions in the main loop
-}
-```
