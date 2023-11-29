@@ -5,7 +5,7 @@ Here's a simple subroutine using Timer 1 to create a millisecond counter - note 
 1. **Define Global Variables:**
    - Define a volatile global variable to keep track of the milliseconds.
 
-2. **Initialize Timer 1:**
+2. **Initialise Timer 1:**
    - Set Timer 1 to CTC (Clear Timer on Compare Match) mode.
    - Set the compare value to match the clock frequency and prescaler to get a 1ms interval.
 
@@ -62,7 +62,7 @@ int main(void) {
 
 
 ### Using this in code
-based on this we can start to use this run run tasks or check things based on the millis value i.e:
+Based on this, we can start to use this to run tasks or check things based on the millis value i.e:
 
 volatile uint32_t milliseconds = 0;
 
