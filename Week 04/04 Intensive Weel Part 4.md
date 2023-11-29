@@ -1,9 +1,6 @@
-# Reading Analog Input and Transmitting Over USART with AVR/Standard C Libraries
+# Reading Analog Input, PWM, and Ultrasonic Sensors.
 
-## Introduction
-- Overview of interfacing an ADC and USART with AVR microcontrollers.
-- Application in real-world scenarios.
-
+# Analog
 ## Setup and Read ADC
 - **Function `ADC_setup`**: Configures the ADC for reading an analog input.
   - `ADMUX` and `ADCSRA` settings for reference voltage, input channel, and clock prescaler.
@@ -116,10 +113,7 @@ int main (void){
 }
 ```
 
-# Implementing PWM Output with AVR/Standard C Libraries
-
-## Introduction to PWM
-- Explanation of PWM and its applications in controlling devices like LEDs and motors.
+# PWM
 
 ## Setting Up PWM
 - **Function `PWM_setup`**: Configures Timer/Counter for PWM output.
@@ -170,18 +164,9 @@ int main() {
 ## Experimenting with PWM
 - Experiment by changing `OCR0B` values to see different PWM effects. you can also set PD6 to work with timer 0 at the same time by adding it `TCCR0A` by including `(1<<COM0A1)`. then you can set the duty cycle by using `OCR0A`
 
-# Interfacing with an Ultrasonic Sensor using AVR/Standard C Libraries
+# Ultrasonic Sensor
 
-**Please note this example is to be used in conjuction with the workshop slides**
-
-## Introduction to Ultrasonic Sensors
-- Overview of how ultrasonic sensors work.
-- Common applications in distance measurement and obstacle detection.
-
-## Setting Up the Ultrasonic Sensor
-- **Pin Configuration**: Defining trigger and echo pins.
-- **Initialisation**: Setting up I/O and Timer for the ultrasonic sensor.
-
+**Please note this example is to be used in conjunction with the workshop slides**
   
 ### Initialisation Code Snippet
 ```c
