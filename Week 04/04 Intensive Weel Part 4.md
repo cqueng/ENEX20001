@@ -47,17 +47,21 @@ uint16_t read_ADC (void){
    - To read from a different analog pin, you set the `ADMUX` register accordingly.
    - Each analog pin corresponds to a specific setting of the MUX bits in the ADMUX register.
    - For example:
-     - To select A0, you set `ADMUX` to `(1<<REFS0)`.
-     - To select A1, set `ADMUX` to `(1<<REFS0)|(1<<MUX0)`.
-     - For A2, set `ADMUX` to `(1<<REFS0)|(1<<MUX1)`.
+     - To select A0, you set `ADMUX` to `(1<<REFS0)` or `(1<<REFS0)| 0`.
+     - To select A1, set `ADMUX` to `(1<<REFS0)|(1<<MUX0)` or `(1<<REFS0)| 1`.
+     - For A2, set `ADMUX` to `(1<<REFS0)|(1<<MUX1)` and so on...
    - The `REFS0` bit sets the reference voltage to AVcc (5V).
 
 2. **Converting ADC Value to Voltage:**
    - The Arduino Uno has a 10-bit ADC, so the ADC values range from 0 to 1023.
    - To convert an ADC value to a voltage, you use the formula:
-     \[ \text{Voltage} = \left( \text{ADC Value} \times \text{Reference Voltage} \right) / \text{ADC Resolution} \]
+     ```
+     Voltage = (ADC Value × Reference Voltage) / ADC Resolution
+     ```
    - Assuming a reference voltage of 5V, the formula becomes:
-     \[ \text{Voltage} = \left( \text{ADC Value} \times 5V \right) / 1024 \]
+     ```
+     Voltage = (ADC Value × 5V) / 1024
+     ```
    - This will give you the voltage corresponding to the ADC value.
 
 
