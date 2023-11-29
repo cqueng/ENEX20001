@@ -81,22 +81,41 @@ int main(void) {
 
 #### Example
 ```c
+#include <avr/io.h>
 #include <avr/interrupt.h>
 
-ISR(INT0_vect) {
-    PORTD ^= (1 << PD0); // Toggle LED on interrupt
+#define LED_PIN PD0
+#define BUTTON_PIN PD2 //NEEDS to be a interrupt PIN!
+
+void setup() {
+  // Set LED pin as output
+  DDRD |= (1 << LED_PIN);
+
+  // Set button pin as input
+  DDRD &= ~(1 << BUTTON_PIN);
+
+  // Enable pull-up resistor on the button pin
+  PORTD |= (1 << BUTTON_PIN);
+
+  // Set up an interrupt on the button pin
+  EICRA |= (1 << ISC01); // Trigger on falling edge
+  EIMSK |= (1 << INT0);  // Enable INT0 interrupt
+
+  // Enable global interrupts
+  sei();
 }
 
 int main(void) {
-    DDRD |= 0x0F; // Set PORTD0-3 as output for LEDs
-    EIMSK |= (1 << INT0); // Enable external interrupt INT0
-    sei(); // Enable global interrupts
-
-    while (1) {
-        // Main loop
-    }
-    return 0;
+  setup();
+  while(1);
+  // Main loop does nothing. All action happens in the interrupt service routine.
 }
+
+ISR(INT0_vect) {
+  // Toggle LED state
+  PORTD ^= (1 << LED_PIN);
+}
+
 ```
 
 
