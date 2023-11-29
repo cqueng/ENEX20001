@@ -13,15 +13,31 @@
 ### ADC Code Snippet
 ```c
 void ADC_setup (void){
+    // Configure the ADMUX register:
+    // - (1<<REFS0) sets the reference voltage to AVcc (typically 5V).
+    // - (1<<MUX0) selects the ADC1 channel (corresponding to analog input A1 on Arduino Uno).
     ADMUX |= (1<<REFS0)|(1<<MUX0);
+
+    // Configure the ADCSRA register:
+    // - (1<<ADEN) enables the ADC.
+    // - (1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0) sets the ADC prescaler to 128, 
+    //   which determines the speed of the ADC conversion.
     ADCSRA |= (1<<ADEN)|(1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0);
 }
 
 uint16_t read_ADC (void){
+    // Start the ADC conversion by setting the ADSC bit in ADCSRA.
     ADCSRA |= (1<<ADSC);
+
+    // Wait in a loop until the ADSC bit has been cleared, indicating 
+    // the ADC conversion is complete.
     while ((ADCSRA & (1<<ADSC)) == 0) {};
+
+    // Return the ADC conversion result. The ADC register holds the 
+    // result of the last conversion.
     return (ADC);
 }
+
 ```
 
 **Note - You must specify the Analog Pin being measured. You can get this information from the analog section of the datasheet**
