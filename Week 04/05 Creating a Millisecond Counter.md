@@ -107,10 +107,8 @@ Consider our basic on-off LED code, which used two `_delay_ms(500);` This code b
         }
 ```
 
-To do this, we need to create a few registers to keep track of our time and states.
+To do this, we need to create a few registers to keep track of our time and states, in addition to the global variable `volatile uint32_t milliseconds = 0;`.
 ```
-   volatile uint32_t milliseconds = 0;
-
    uint32_t lastTime = 0;
    int currentLed = 0;
    int state = 0; // State 0 for LED off, 1 for LED on
