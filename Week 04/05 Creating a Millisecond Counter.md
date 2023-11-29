@@ -94,3 +94,52 @@ int main(void) {
     }
 }
 ```
+
+#### Another example based on a basic code that used two delays
+
+Consider our basic on-off LED code, which used two `_delay_ms(500);` This code blocks PWM and ultra sonic reading. This creates issues when you're developing a responsive robot.
+```
+    while (1) {
+         PORTD |= (1 << i);
+         _delay_ms(500);
+         PORTD &= ~(1 << i);
+         _delay_ms(500);
+        }
+```
+
+To do this, we need to create a few registers to keep track of our time and states.
+```
+   volatile uint32_t milliseconds = 0;
+
+   uint32_t lastTime = 0;
+   int currentLed = 0;
+   int state = 0; // State 0 for LED off, 1 for LED on
+```
+
+After setting up our timer1, we can use `millis()` to track the milliseconds:
+```
+uint32_t millis() {
+    return milliseconds;
+}
+```
+
+Inside of our while loop, we wrap the command around the millis so every 500ms it will execute the command once, then skip until the next 500ms and so on.
+```
+    while (1) {
+        if ((millis() - lastTime) >= 500) { // Check if 500 ms have passed
+            if (state == 0) {
+                PORTD &= ~(1 << currentLed); // Turn off the current LED
+                currentLed = (currentLed + 1) % 4; // Move to the next LED
+                state = 1; // Set the state to turn the LED on next
+            } else {
+                PORTD |= (1 << currentLed); // Turn on the current LED
+                state = 0; // Set the state to turn the LED off next
+            }
+            lastTime = millis(); // Update the last time the state changed
+        }
+        // Other non-blocking code can be placed here
+    }
+
+```
+You can add multiples of these inside your while loop. However, you will need to create unique `lastTime` variables/states and so on.
+
