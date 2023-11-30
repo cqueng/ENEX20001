@@ -255,7 +255,7 @@ void sendUltrasonicTrigger(){
     PORTD &= ~(1 << ULTRASONIC_TRIGGER_PIN);
 }
 
-int main() {
+int main(void) {
     // Main loop to repeatedly measure distance
     // Initial setup
     usart_setup();
