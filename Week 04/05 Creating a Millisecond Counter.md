@@ -141,3 +141,82 @@ Inside of our while loop, we wrap the command around the millis so every 500ms i
 ```
 You can add multiples of these inside your while loop. However, you will need to create unique `lastTime` variables/states and so on.
 
+For example, let's include two separate non-blocking functions:
+
+1. **Pressing Button 2 while the LED is on will turn it off immediately.**
+2. **Pressing Button 1 again while the LED is on will reset the timer, keeping the LED on for another 4 seconds.**
+
+Here's the updated code, we are using the same functions as above:
+
+```c
+#include <avr/io.h>
+#include <avr/interrupt.h>
+
+#define TOGGLE_LED_PIN PD4
+#define CONTROLLED_LED_PIN PD5
+#define BUTTON1_PIN PD2
+#define BUTTON2_PIN PD3
+
+volatile uint32_t milliseconds = 0;
+
+void init_millis() {
+    // Timer1 initialisation code for 1ms increment...
+    // ...
+}
+
+ISR(TIMER1_COMPA_vect) {
+    milliseconds++;
+}
+
+void setup_pins() {
+    // Set LED pins as output
+    DDRD |= (1 << TOGGLE_LED_PIN) | (1 << CONTROLLED_LED_PIN);
+
+    // Set button pins as input with pull-up enabled
+    DDRD &= ~((1 << BUTTON1_PIN) | (1 << BUTTON2_PIN));
+    PORTD |= (1 << BUTTON1_PIN) | (1 << BUTTON2_PIN);
+}
+
+void toggle_led_every_2_seconds() {
+    static uint32_t lastToggleTime = 0;
+    if ((millis() - lastToggleTime) >= 2000) {
+        PORTD ^= (1 << TOGGLE_LED_PIN); // Toggle LED
+        lastToggleTime = millis();
+    }
+}
+
+void control_led_with_buttons() {
+    static uint32_t ledOnTime = 0;
+    static uint8_t ledState = 0;
+
+    // Turn on LED or reset timer when Button 1 is pressed
+    if (!(PIND & (1 << BUTTON1_PIN))) {
+        PORTD |= (1 << CONTROLLED_LED_PIN);
+        ledOnTime = millis();
+        ledState = 1;
+    }
+
+    // Turn off LED early if Button 2 is pressed, or after 4 seconds
+    if (ledState && ((millis() - ledOnTime) >= 4000 || !(PIND & (1 << BUTTON2_PIN)))) {
+        PORTD &= ~(1 << CONTROLLED_LED_PIN);
+        ledState = 0;
+    }
+}
+
+int main(void) {
+    init_millis();
+    setup_pins();
+
+    while(1) {
+        toggle_led_every_2_seconds();  // Non-blocking LED toggle
+        control_led_with_buttons();    // Non-blocking LED control with buttons
+        // Other non-blocking tasks can be added here
+    }
+}
+```
+
+From this we can see:
+- **`toggle_led_every_2_seconds`:** Continues to toggle an LED on PD4 every 2 seconds.
+- **`control_led_with_buttons`:**
+    - When Button 1 (PD2) is pressed, the LED on PD5 turns on. If the LED is already on, pressing Button 1 again resets the 4-second timer.
+    - Pressing Button 2 (PD3) while the LED is on turns it off immediately, overriding the 4-second duration.
