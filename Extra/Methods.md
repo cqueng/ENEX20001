@@ -65,11 +65,12 @@ int main() {
                     break;
                 }
                 if (i > (FOR_CYCLES - 1)) {
-                    mode = 4; // Left this inside so that if it breaks it doesn't overwrite the above
+                    mode = 4; // Left this inside so that if it breaks, it doesn't overwrite the above
                 }
             }
         }
     }
+    // you might want a else mode = 0 here? again, it's up to you and your flow.
 
     // Add additional actions based on the mode values here
 
