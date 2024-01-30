@@ -9,10 +9,10 @@ Below is a general overview of what has been discussed for those who missed out.
 #define ARRAY_SIZE 3
 
 // Assuming these functions are defined elsewhere
-extern void turn_right();
-extern void move_fwd();
-extern void stop();
-extern int line_detected(); // Function to check if a line is detected
+void turn_right();
+void move_fwd();
+void stop();
+int line_detected(); // Function to check if a line is detected
 
 int main() {
     int distance[ARRAY_SIZE] = {25, 100, 100}; // Example distances
@@ -81,7 +81,7 @@ int main() {
 ### Non-blocking code could look like:
 See week 4 to see timer setups for this to work
 
-```
+```c
 #define IDLE 0
 #define TURNING_LEFT 1
 #define MOVING_FORWARD 2
@@ -93,9 +93,9 @@ volatile uint32_t actionStartTime = 0;
 #define TURN_DURATION_MS 1000  // Time it takes to turn left
 #define MOVE_DURATION_MS 2000  // Time to move forward after turning
 
-extern void turn_left();  // Function to turn the robot left
-extern void move_fwd();   // Function to move the robot forward
-extern void stop_robot(); // Function to stop the robot
+void turn_left();  // Function to turn the robot left
+void move_fwd();   // Function to move the robot forward
+void stop_robot(); // Function to stop the robot
 
 void start_turning_left() {
     turn_left();
